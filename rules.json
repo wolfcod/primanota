@@ -1,0 +1,32 @@
+{
+    "schema" : "0",
+    "description": "primanota json schema",
+    "codice_azienda" : 100,
+    "data" : "2022/01/25 09.00.00",
+    "rules" : [
+        { "field" : "Descrizione", "start" : "Comm.Bon.", "testata" : "", 
+            "righe" : [
+                {},
+                {}
+            ]
+        }
+    ],
+    "csv_field" : [
+        { "field" : "pndre", "source" : "csv", "value" : "Data Operazione"},
+        { "field" : "pnddo", "source" : "csv", "value" : "Data Operazione"},
+        { "field" : "pndre", "source" : "immediate", "value" : "GR"}
+    ],
+
+    "testate" : {
+        "fields" : "PNPRN;PNDRE;PNOPE;PNCAU;CAUGUI;PNTDE;PNRPR;PNSPR;PNNPR;PNRPS;PNSPS;PNNPS;PNINT;SIGVAL;PNEST;SERDOC;PNNDO;PNDDO;DTFTPG;NREGIP;GIORN;REGIP;REGIS;PNBIL;PNDST;DAPARC;USOINT1;USOINT2;USOINT3;USOINT4;USOINT5;_PNGCO;_PNNVA;GESTCORR;VERS;UTENTE;DATAINVIO;ORAINVIO;PNDAVERIF;PNPROVEN;PNCODSAZ;PNNUMRE;PNNVABL;PNNVPBL;PNCTRBL;PNVRP;PNIOPBL;PNEOPBL;PNDCOBL;PNNIDPN;PNAIDPN;PNDRV;PNEDPE;PNFCS;PNTDER;PNCIC1;PNCIC2;PNCIC3;PNCIC4;PNCIC5;PNCIC6;PNCIC7;PNCIC8;PNCIP1;PNCIP2;PNCIP3;PNCIP4;PNCIP5;PNCIP6;PNCIP7;PNCIP8;PNILSP;PNNPPM;PNEDTS;PNEDSF;PNCFSF;PNCOMI;PNPTTS;PNPAEO;PNDPDS",
+        "values" : [
+            { "field" : "PNPRN", "value" : "PROVA" }
+        ]
+    },
+    "righe": {
+        "fields" : "PNPRN;PNDRE;PNCTO;PNIMP;PNCCR;PNDES;PNIMB1;PNIVA1;PNALI1;PNALD1;PNIMB2;PNIVA2;PNALI2;PNALD2;PNIMB3;PNIVA3;PNALI3;PNALD3;PNIMB4;PNIVA4;PNALI4;PNALD4;CODPAG;CODAGE;IMPPRO;USOINT1;USOINT2;USOINT3;USOINT4;USOINT5;USOINT6;USOINT7;USOINT8;USOINT9;PNEDS;PNEDN;PNEDC;PNDDO;PNCND1;PNCND2;PNCND3;PNCND4;PNRSVA;PNRDN;PNRDVA;PNORCO;PNECAC;PNCFPI;PNCCS;PNCCTR;PNTPC;PNTRC;PNDCP;PNTPM",
+        "values" : [
+
+        ]
+    }
+}
