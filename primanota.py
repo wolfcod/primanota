@@ -5,38 +5,6 @@ import sys
 import csv
 import json
 
-# parse_args: input argv, output dictionary of argv
-def parse_args(argv):
-    argparser = argparse.ArgumentParser(epilog='primanota')
-    argparser.add_argument('-i', '--input', help='Input File')
-    argparser.add_argument('-o', '--output', help='Output File')
-    argparser.add_argument('-j', '--json', help='JSON schema rules')
-
-    #print("parse_args parsing =>", argv)
-    args = argparser.parse_args(argv)
-    
-    args_dict = {
-        'input': args.input,
-        'output': args.output,
-        'json': args.json,
-    }
-
-    fail = False
-
-    if args.json is None:
-        print('Error: JSON mancante.')
-        fail = True
-
-    # Verifica gli input forniti...
-    if args.input is None:
-        print('Errore: input richiesto.')
-        fail = True
-    
-    if fail:
-        sys.exit(1)
-    
-    return args_dict
-
 # load_csv: Read an input file, and return a list of dictonary with each line
 def load_csv(csv_name):
     content = []
@@ -81,8 +49,7 @@ def load_rules(json_name):
     f.close()
     return data
 
-def match_line(testata, righe, rules, content):
-    
+def match_line(testata, righe, rules, content): 
     lines = 0
 
     for line in content:
@@ -121,7 +88,6 @@ def dict_csv(fields, values):
 
 def primanota(args):
     #csv.reader(args['input'])
-    content = load_csv(args['input'])
     desc = load_rules(args['json'])
 
     linea_testata = desc['testate']['fields'].split(';')
@@ -130,10 +96,45 @@ def primanota(args):
     # definisce i set iniziali...
     testata = dict_csv(linea_testata, desc['testate']['values'])
     righe = dict_csv(linea_righe, desc['righe']['values'])
-     
+    
+    content = load_csv(args['input'])
+    
     processed = match_line(testata, righe, desc['rules'], content)
     return processed
     
+# parse_args: input argv, output dictionary of argv
+def parse_args(argv):
+    argparser = argparse.ArgumentParser(epilog='primanota')
+    argparser.add_argument('-i', '--input', help='Input File')
+    argparser.add_argument('-o', '--output', help='Output File')
+    argparser.add_argument('-j', '--json', help='JSON schema rules')
+
+    #print("parse_args parsing =>", argv)
+    args = argparser.parse_args(argv)
+    
+    args_dict = {
+        'input': args.input,
+        'output': args.output,
+        'json': args.json,
+    }
+
+    fail = False
+
+    if args.json is None:
+        print('Error: JSON mancante.')
+        fail = True
+
+    # Verifica gli input forniti...
+    if args.input is None:
+        print('Errore: input richiesto.')
+        fail = True
+    
+    if fail:
+        sys.exit(1)
+    
+    return args_dict
+
+# routine principale .. verifica la command line e passa tutto al programma
 def main(argv=sys.argv[1:]):
     args = parse_args(argv)
     if args is None:
@@ -141,7 +142,6 @@ def main(argv=sys.argv[1:]):
 
     processed = primanota(args)
     print('Righe processate %d' %(processed))
-
 
 if __name__ == "__main__":
     main()
