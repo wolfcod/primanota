@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "pn": {
+      "commandName": "Project",
+      "commandLineArgs": "-i $(SolutionDir)data\\input.csv -o $(SolutionDir)data\\pnr.csv -r $(SolutionDir)rules.json"
+    }
+  }
+}

@@ -3,6 +3,15 @@
     "description": "primanota json schema",
     "codice_azienda" : 100,
     "data" : "2022/01/25 09.00.00",
+    "input" : {
+        "format" : "csv",
+        "header" : 1,
+        "fields" : [
+            { "position" : 0, "type" : "Integer", ""}
+        ]
+    },
+    "output" : {
+    },
     "rules" : [
         {
             "field" : "Descrizione",
