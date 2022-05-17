@@ -4,10 +4,25 @@
     "codice_azienda" : 100,
     "data" : "2022/01/25 09.00.00",
     "rules" : [
-        { "field" : "Descrizione", "start" : "Comm.Bon.", "testata" : "", 
+        {
+            "field" : "Descrizione",
+            "rules" : "contains",
+            "value" : "Comm.Bon.",
+            "testata" : [
+                { "field" : "pndre", "type" : "value", "value" : "GR" }
+            ],
             "righe" : [
-                {},
-                {}
+                { "name" : "riga a credito ", "riga" : [
+                    { "field" : "pndre", "type" : "value", "value" : "GR" },
+                    { "field" : "pncto", "type" : "value", "value" : "70900008"},
+                    { "field" : "pnope", "type" : "value", "value" : "1" }
+                ]
+                },
+                { "name" : "riga a debito ", "riga" : [
+                    { "field" : "pndre", "type" : "value", "value" : "GR" },
+                    { "field" : "pncto", "type" : "value", "value" : "20201004"}
+                ]
+                }
             ]
         }
     ],
