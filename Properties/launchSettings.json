@@ -2,7 +2,7 @@
   "profiles": {
     "pn": {
       "commandName": "Project",
-      "commandLineArgs": "-i $(SolutionDir)data\\input.csv -o $(SolutionDir)data\\pnr.csv -r $(SolutionDir)rules.json"
+      "commandLineArgs": "-i $(SolutionDir)data\\input.csv -t $(SolutionDir)data\\pnt.csv -r $(SolutionDir)data\\pnr.csv"
     }
   }
 }

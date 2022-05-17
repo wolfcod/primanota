@@ -11,7 +11,7 @@ namespace pn
 {
     class CSVInputReader
     {
-        static List<RigheBanca> ParseInputFile(StreamReader reader, int headerLineNo)
+        public List<RigheBanca> ParseInputFile(StreamReader reader, int headerLineNo)
         {
             string line;
             List<RigheBanca> righe = new List<RigheBanca>();
@@ -27,8 +27,12 @@ namespace pn
                 //Define pattern
                 Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
+                
                 //Separating columns to array
                 string[] X = CSVParser.Split(line);
+
+                if (X.Length < 9)
+                    continue;
 
                 /* Do something with X */
                 RigheBanca riga = new RigheBanca();

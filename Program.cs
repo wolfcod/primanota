@@ -16,11 +16,12 @@ namespace pn
         [Option('i', "input", Required = true, HelpText = ("Input File."))]
         public string Input { get; set; }
 
-        [Option('o', "output", Required = true, HelpText = ("Output fileFile."))]
-        public string Output { get; set; }
+        [Option('t', "testata", Required = false, HelpText = ("Testata output file."))]
+        public string Testate { get; set; }
 
-        [Option('r', "rules", Required = false, HelpText = ("JSON SCHEMA RULES."))]
-        public string Rules { get; set; }
+
+        [Option('r', "righe", Required = false, HelpText = ("Righe output file"))]
+        public string Righe { get; set; }
     }
 
     class Program
@@ -29,8 +30,9 @@ namespace pn
         static void Main(string[] args)
         {
             StreamReader r = null;
-            StreamWriter w = null;
-
+            
+            StreamWriter tOutput = null;
+            StreamWriter rOutput = null;
             Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o =>
             {
                 if (o.Verbose)
@@ -39,12 +41,56 @@ namespace pn
                 }
 
                 r = new StreamReader(o.Input);
-                w = new StreamWriter(o.Output);
+
+                if (o.Testate.Length > 0)
+                    tOutput = new StreamWriter(o.Testate);
+
+                if (o.Righe.Length > 0)
+                    rOutput = new StreamWriter(o.Righe);
             });
-            
+
+            List<RigheBanca> data = null;
             if (r != null)
             {
-                ParseInputFile(r);
+                CSVInputReader input = new CSVInputReader();
+                data = input.ParseInputFile(r, 1);
+            }
+
+            PrimaNota pn = new PrimaNota();
+
+            if (data != null)
+            {
+
+                int i = 1;
+                foreach(RigheBanca riga in data)
+                {
+                    pn.Converti(i++, riga);
+                }
+            }
+
+            if (tOutput != null)
+            {
+                tOutput.WriteLine(pn.HeaderTestate);
+                foreach (string txt in pn.Testate)
+                {
+                    tOutput.WriteLine(txt);
+                }
+
+                tOutput.Flush();
+                tOutput.Close();
+            }
+
+            if (rOutput != null)
+            {
+                rOutput.WriteLine(pn.HeaderRighe);
+                foreach (string txt in pn.Righe)
+                {
+                    rOutput.WriteLine(txt);
+                }
+
+                rOutput.Flush();
+                rOutput.Close();
+
             }
         }
     }
