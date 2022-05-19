@@ -64,7 +64,12 @@ namespace pn
                 int i = 1;
                 foreach(RigheBanca riga in data)
                 {
-                    pn.Converti(i++, riga);
+                    int k = pn.Match(riga);
+                    if (k>0)
+                    {
+                        pn.Converti(k, i++, riga);
+                    }
+                        
                 }
             }
 

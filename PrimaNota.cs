@@ -93,15 +93,63 @@ namespace pn
     }
 
 
+    public class Conversione
+    {
+        public int regola;
+        public string PNCTO;
+        public string PNTDE;
+        public bool DareAvere;
+        public string Format;
+
+        public Conversione(int r, string a, string b, bool d, string f)
+        {
+            this.regola = r;
+            this.PNCTO = a;
+            this.PNTDE = b;
+            this.DareAvere = d;
+            this.Format = f;
+        }
+    }
+
     class PrimaNota
     {
+        static Conversione[] regole = new Conversione[]
+        {
+            new Conversione(1, "70900008", "COMMISSIONI OPERAZIONI BANC.",  true, "-0.00"),
+            new Conversione(1, "20201004", "COMMISSIONI OPERAZIONI BANC.",  false, "0.00"),
+            new Conversione(2, "20201004", "INCASSI POS CORRISP", true, "0.00"),
+            new Conversione(2, "22200004", "INCASSI POS CORRISP", false, "-0.00"),
+            new Conversione(3, "73500001", "IMPOSTA DI BOLLO C/C", true, "-0.00"),
+            new Conversione(3, "20201004", "IMPOSTA DI BOLLO C/C", false, "0.00"),
+
+        };
+
+        static Dictionary<string, int> descrizioni = new Dictionary<string, int> {
+            {  "comm.bon.", 1 },
+            {  "bs 3255043", 2 },
+            {  "pos5504315", 2 },
+            { "imposta di bollo", 3 }
+        };
+
         public PrimaNota()
         {
             testate = new List<string>();
             righe = new List<string>();
         }
 
-        public bool Converti(int progressivo, RigheBanca r)
+        public int Match(RigheBanca r)
+        {
+            foreach (KeyValuePair<string, int> k in descrizioni)
+                if (r.Descrizione.ToLower().StartsWith(k.Key))
+                    return k.Value;
+
+            foreach (KeyValuePair<string, int> k in descrizioni)
+                if (r.Etichette.ToLower().StartsWith(k.Key))
+                    return k.Value;
+
+            return 0;
+        }
+        public bool Converti(int k, int progressivo, RigheBanca r)
         {
             Testata t = new Testata();
 
@@ -111,20 +159,24 @@ namespace pn
             t["DATAINVIO"] = r.DataValuta.ToString("ddMMyyyy");
             t["ORAINVIO"] = "08:00";
             t["PNNIDPN"] = progressivo.ToString();
-
-            for (int i = 0; i < 2; i++)
+            
+            foreach(Conversione c in regole)
             {
+                if (c.regola != k)
+                    continue;
+
                 Riga riga = new();
 
                 riga["PNPRN"] = progressivo.ToString();
                 riga["PNDRE"] = r.DataValuta.ToString("ddMMyyyy");
-                riga["PNCTO"] = (i == 0) ? "20201004" : "22200081";
+                riga["PNCTO"] = c.PNCTO;
+                riga["PNTDE"] = c.PNTDE;
 
                 decimal valore = r.Valore;
 
                 if (valore < 0)
                     valore = -valore;
-                riga["PNIMP"] = (i == 0) ? valore.ToString("0.00") : valore.ToString("-0.00");
+                riga["PNIMP"] = valore.ToString(c.Format);
 
                 righe.Add(riga.ToString());
             }
