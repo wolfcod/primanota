@@ -9,55 +9,87 @@ using System.Text.RegularExpressions;
 
 namespace pn
 {
+    enum CSVState
+    {
+        Header,
+        Content,
+        Invalid,
+        EndOfFile
+    };
+
     class CSVInputReader
     {
-        public List<RigheBanca> ParseInputFile(StreamReader reader, int headerLineNo)
+        private CSVState state = CSVState.Invalid;
+        private int numberOfFields = 0;
+        private int numberOfHeader = 1;
+
+        public CSVInputReader(int fields)
         {
+            this.numberOfFields = fields;
+            this.numberOfHeader = 1;
+        }
+
+        private bool ParseLine(out RigheBanca riga, string [] fields)
+        {
+            riga = new RigheBanca();
+            riga.CodiceIdentificativo = Convert.ToInt64(fields[0].Replace('"', ' ').Trim());
+            riga.DataOperazione = DateTime.ParseExact(fields[1].Replace('"', ' ').Trim(), "dd/MM/yyyy", null);
+            riga.DataValuta = DateTime.ParseExact(fields[2].Replace('"', ' ').Trim(), "dd/MM/yyyy", null);
+            riga.Descrizione = fields[3].Replace('"', ' ').Trim();
+            riga.Divisa = fields[4].Replace('"', ' ').Trim();
+            if (fields[5].Length > 2)
+            {
+                string Valore = fields[5].Replace('"', ' ').Replace('-', ' ').Trim();
+                riga.Valore = decimal.Parse(Valore, new NumberFormatInfo() { NumberDecimalSeparator = ",", NumberGroupSeparator = "." });
+                riga.Valore = -riga.Valore;
+            }
+            else
+            {
+                string Valore = fields[6].Replace('"', ' ').Replace('+', ' ').Trim();
+                riga.Valore = decimal.Parse(Valore, new NumberFormatInfo() { NumberDecimalSeparator = ",", NumberGroupSeparator = "." });
+            }
+            riga.Categoria = fields[7].Replace('"', ' ').Trim();
+            riga.Etichette = fields[7].Replace('"', ' ').Trim();
+            return true;
+        }
+
+        public List<RigheBanca> ParseInputFile(StreamReader reader)
+        {
+            this.state = CSVState.Header;
+
             string line;
             List<RigheBanca> righe = new List<RigheBanca>();
 
-            // consume N line from the header
-            while (headerLineNo-- > 0)
-            {
-                reader.ReadLine();  //
-            }
+            Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
             while ((line = reader.ReadLine()) != null)
             {
-                //Define pattern
-                Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                string[] fields = CSVParser.Split(line);
 
-                
-                //Separating columns to array
-                string[] X = CSVParser.Split(line);
+                if (fields.Length != this.numberOfFields)
+                    this.state = CSVState.Invalid;
 
-                if (X.Length < 9)
-                    continue;
+                RigheBanca outR = null;
 
-                /* Do something with X */
-                RigheBanca riga = new RigheBanca();
-
-                riga.CodiceIdentificativo = Convert.ToInt64(X[0].Replace('"', ' ').Trim());
-                riga.DataOperazione = DateTime.ParseExact(X[1].Replace('"', ' ').Trim(), "dd/MM/yyyy", null);
-                riga.DataValuta = DateTime.ParseExact(X[2].Replace('"', ' ').Trim(), "dd/MM/yyyy", null);
-                riga.Descrizione = X[3].Replace('"', ' ').Trim();
-                riga.Divisa = X[4].Replace('"', ' ').Trim();
-                if (X[5].Length > 2)
+                switch(this.state)
                 {
-                    string Valore = X[5].Replace('"', ' ').Replace('-', ' ').Trim();
-                    riga.Valore = decimal.Parse(Valore, new NumberFormatInfo() { NumberDecimalSeparator = ",", NumberGroupSeparator = "." });
-                    riga.Valore = -riga.Valore;
+                    case CSVState.Header:   // consume "numberOfHeader" fields before switching to content!
+                        this.numberOfHeader--;
+                        if (this.numberOfHeader == 0)
+                            this.state = CSVState.Content;
+                        break;
+                    case CSVState.Content:
+                        if (ParseLine(out outR, fields))
+                            if (outR != null)
+                                righe.Add(outR);
+                        break;
+                    case CSVState.Invalid:
+                        Console.WriteLine("Processing {0} => INVALID.", line);
+                        this.state = CSVState.Content;  // the wrong line could be a page footer or document footer.. switch back to content
+                        break;
                 }
-                else
-                {
-                    string Valore = X[6].Replace('"', ' ').Replace('+', ' ').Trim();
-                    riga.Valore = decimal.Parse(Valore, new NumberFormatInfo() { NumberDecimalSeparator = ",", NumberGroupSeparator = "." });
-                }
-                riga.Categoria = X[7].Replace('"', ' ').Trim();
-                riga.Etichette = X[7].Replace('"', ' ').Trim();
-                righe.Add(riga);
+
             }
-
             return righe;
         }
     }

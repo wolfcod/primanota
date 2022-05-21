@@ -52,8 +52,8 @@ namespace pn
             List<RigheBanca> data = null;
             if (r != null)
             {
-                CSVInputReader input = new CSVInputReader();
-                data = input.ParseInputFile(r, 1);
+                CSVInputReader input = new CSVInputReader(10);
+                data = input.ParseInputFile(r);
             }
 
             PrimaNota pn = new PrimaNota();

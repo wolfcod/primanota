@@ -4,6 +4,13 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject>pn.Program</StartupObject>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>PrimaNota</PackageId>
+    <Authors>antonio</Authors>
+    <Company />
+    <Product>PrimaNota</Product>
+    <Description>PassePartout PrimaNota</Description>
+    <PackageProjectUrl>https://www.github.com/wolfcod/primanota</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
